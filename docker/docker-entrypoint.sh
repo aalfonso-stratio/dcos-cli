@@ -58,10 +58,7 @@ if [[ "${TOKEN_AUTHENTICATION}" == "true" ]]; then
 			exit
 		fi
 		system=$(echo ${DCOS_IP} | cut -d"/" -f3)
-		for i in {1..5}
-		    do
-		        dcos_secret=$(sshpass -p "${REMOTE_PASSWORD}" ssh -ttt -o StrictHostKeyChecking=no ${BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret) && break
-		done
+		dcos_secret=$(sshpass -p "${REMOTE_PASSWORD}" ssh -ttt -o StrictHostKeyChecking=no ${BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret)
 	else
 		if [[ ! -f ${PEM_FILE_PATH} ]]; then
 			echo "Pem file provided does not exist in system!!"
@@ -72,12 +69,12 @@ if [[ "${TOKEN_AUTHENTICATION}" == "true" ]]; then
             exit
 		fi
 		system=$(echo ${DCOS_IP} | cut -d"/" -f3)
-		for i in {1..5}
-		    do
-                dcos_secret=$(ssh -ttt -o "StrictHostKeyChecking no" -i ${PEM_FILE_PATH} ${BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret) && break
-        done
+        dcos_secret=$(ssh -ttt -o "StrictHostKeyChecking no" -i ${PEM_FILE_PATH} ${BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret)
 	fi
-	token=$(java -jar /dcos/dcosTokenGenerator.jar $dcos_secret ${DCOS_USER})
+	for i in {1..5}
+	    do
+	        token=$(java -jar /dcos/dcosTokenGenerator.jar $dcos_secret ${DCOS_USER}) && break
+	done
     dcos config set core.dcos_acs_token $token
 fi
 

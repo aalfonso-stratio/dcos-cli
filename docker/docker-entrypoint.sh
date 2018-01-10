@@ -71,10 +71,7 @@ if [[ "${TOKEN_AUTHENTICATION}" == "true" ]]; then
 		system=$(echo ${DCOS_IP} | cut -d"/" -f3)
         dcos_secret=$(ssh -ttt -o "StrictHostKeyChecking no" -i ${PEM_FILE_PATH} ${BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret)
 	fi
-	for i in {1..5}
-	    do
-	        token=$(java -jar /dcos/dcosTokenGenerator.jar $dcos_secret ${DCOS_USER}) && break
-	done
+	token=$(java -jar /dcos/dcosTokenGenerator.jar $dcos_secret ${DCOS_USER})
     dcos config set core.dcos_acs_token $token
 fi
 

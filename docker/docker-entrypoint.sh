@@ -42,10 +42,6 @@ dcos config set core.ssl_verify ${SSL_VERIFY:-false}
 echo "Setting core.timeout to: ${TIMEOUT:-5}" >> /dcos/dcos-cli-setup.log
 dcos config set core.timeout ${TIMEOUT:-5}
 
-source /usr/local/bin/env-setup
-
-echo "source /usr/local/bin/env-setup" >> /root/.bashrc
-
 if [[ "${SSH}" == "true" ]]; then
     echo "Setting up ssh..."
     /usr/sbin/sshd -e

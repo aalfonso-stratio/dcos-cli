@@ -75,4 +75,6 @@ if [[ ! -z ${DCOS_IP} ]]; then
 	echo "${DCOS_IP}	master.mesos" >> /etc/hosts
 fi
 
+echo "export PYTHONWARNINGS=\"ignore:Unverified HTTPS request\"" >> /root/.bashrc
+
 tail -f /dcos/dcos-cli-setup.log

@@ -77,4 +77,23 @@ fi
 
 echo "export PYTHONWARNINGS=\"ignore:Unverified HTTPS request\"" >> /root/.bashrc
 
+attempts=0
+running=$(dcos task | grep "MESOS ID" | wc -l)
+while [ $running -lt 1 ]; do
+  if [ $attempts -gt 12 ]; then
+        break
+  fi
+  attempts=$((attempts+1))
+  echo "Waiting for service to be up & running..."
+  sleep 5
+  running=$(dcos task | grep "MESOS ID" | wc -l)
+done
+
+if [ $attempts == 13 ]; then
+  echo "It has not been possible to authenticate to cluster"
+  exit
+fi
+
+nc -l -p ${PORT:-5000} &
+
 tail -f /dcos/dcos-cli-setup.log

@@ -78,7 +78,7 @@ fi
 echo "export PYTHONWARNINGS=\"ignore:Unverified HTTPS request\"" >> /root/.bashrc
 
 attempts=0
-running=$(dcos task | grep NAME | wc -l)
+running=$(dcos service | grep NAME | wc -l)
 while [ $running -lt 1 ]; do
   if [ $attempts -gt 12 ]; then
         break
@@ -86,7 +86,7 @@ while [ $running -lt 1 ]; do
   attempts=$((attempts+1))
   echo "Waiting for service to be up & running..."
   sleep 5
-  running=$(dcos task | grep NAME | wc -l)
+  running=$(dcos service | grep NAME | wc -l)
 done
 
 if [ $attempts == 13 ]; then

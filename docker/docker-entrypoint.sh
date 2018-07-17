@@ -49,23 +49,23 @@ fi
 
 if [[ "${TOKEN_AUTHENTICATION}" == "true" ]]; then
 	if [[ -z ${PEM_FILE_PATH} ]]; then
-		if [[ -z ${BOOTSTRAP_USER} || -z ${REMOTE_PASSWORD} ]]; then
+		if [[ -z ${CLI_BOOTSTRAP_USER} || -z ${CLI_BOOTSTRAP_PASSWORD} ]]; then
 			echo "No user and/or password provided for DCOS cluster Manager system"
 			exit
 		fi
 		system=$(echo ${DCOS_IP} | cut -d"/" -f3)
-		dcos_secret=$(sshpass -p "${REMOTE_PASSWORD}" ssh -ttt -o StrictHostKeyChecking=no ${BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret)
+		dcos_secret=$(sshpass -p "${CLI_BOOTSTRAP_PASSWORD}" ssh -ttt -o StrictHostKeyChecking=no ${CLI_BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret)
 	else
 		if [[ ! -f ${PEM_FILE_PATH} ]]; then
 			echo "Pem file provided does not exist in system!!"
 		    exit
 		fi
-		if [[ -z ${BOOTSTRAP_USER} ]]; then
+		if [[ -z ${CLI_BOOTSTRAP_USER} ]]; then
             echo "No user provided for DCOS cluster Manager system"
             exit
 		fi
 		system=$(echo ${DCOS_IP} | cut -d"/" -f3)
-        dcos_secret=$(ssh -ttt -o "StrictHostKeyChecking no" -i ${PEM_FILE_PATH} ${BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret)
+        dcos_secret=$(ssh -ttt -o "StrictHostKeyChecking no" -i ${PEM_FILE_PATH} ${CLI_BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret)
 	fi
 	token=$(java -jar /dcos/dcosTokenGenerator.jar $dcos_secret ${DCOS_USER})
     dcos config set core.dcos_acs_token $token

@@ -73,7 +73,7 @@ if [[ "${TOKEN_AUTHENTICATION}" == "true" ]]; then
             exit
 		fi
 		system=$(echo ${DCOS_IP} | cut -d"/" -f3)
-        dcos_secret=$(ssh -ttt -o "StrictHostKeyChecking no" -i ${PEM_FILE_PATH} ${CLI_BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret)
+        dcos_secret=$(ssh -ttt -p ${SSHPORT} -o "StrictHostKeyChecking no" -i ${PEM_FILE_PATH} ${CLI_BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret)
 	fi
 	token=$(java -jar /dcos/dcosTokenGenerator.jar $dcos_secret ${DCOS_USER})
     dcos config set core.dcos_acs_token $token

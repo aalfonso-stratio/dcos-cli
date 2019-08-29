@@ -2,6 +2,8 @@
 
 set -e
 
+SSHPORT=22
+
 echo "Initial dcos-cli setup:" > /dcos/dcos-cli-setup.log
 if [[ ! -z ${DCOS_IP} ]]; then
     echo "Setting core.dcos_url to: ${DCOS_IP}" >> /dcos/dcos-cli-setup.log
@@ -33,6 +35,7 @@ if [[ ! -z ${TOKEN} ]]; then
     dcos config set core.token ${TOKEN}
 fi
 
+
 echo "Setting core.reporting to: ${CORE_REPORTING:-true}" >> /dcos/dcos-cli-setup.log
 dcos config set core.reporting ${CORE_REPORTING:-true}
 
@@ -47,6 +50,11 @@ if [[ "${SSH}" == "true" ]]; then
     /usr/sbin/sshd -e
 fi
 
+if [[ ! -z ${SSH_PORT} ]]; then
+    echo "Using ssh port ${SSH_PORT} instead of default one ${SSHPORT}"
+    SSHPORT=${SSH_PORT}
+fi
+
 if [[ "${TOKEN_AUTHENTICATION}" == "true" ]]; then
 	if [[ -z ${PEM_FILE_PATH} ]]; then
 		if [[ -z ${CLI_BOOTSTRAP_USER} || -z ${CLI_BOOTSTRAP_PASSWORD} ]]; then
@@ -54,7 +62,7 @@ if [[ "${TOKEN_AUTHENTICATION}" == "true" ]]; then
 			exit
 		fi
 		system=$(echo ${DCOS_IP} | cut -d"/" -f3)
-		dcos_secret=$(sshpass -p "${CLI_BOOTSTRAP_PASSWORD}" ssh -ttt -o StrictHostKeyChecking=no ${CLI_BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret)
+		dcos_secret=$(sshpass -p "${CLI_BOOTSTRAP_PASSWORD}" ssh -ttt -p ${SSHPORT} -o StrictHostKeyChecking=no ${CLI_BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret)
 	else
 		if [[ ! -f ${PEM_FILE_PATH} ]]; then
 			echo "Pem file provided does not exist in system!!"
@@ -65,7 +73,7 @@ if [[ "${TOKEN_AUTHENTICATION}" == "true" ]]; then
             exit
 		fi
 		system=$(echo ${DCOS_IP} | cut -d"/" -f3)
-        dcos_secret=$(ssh -ttt -o "StrictHostKeyChecking no" -i ${PEM_FILE_PATH} ${CLI_BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret)
+        dcos_secret=$(ssh -ttt -p ${SSHPORT} -o "StrictHostKeyChecking no" -i ${PEM_FILE_PATH} ${CLI_BOOTSTRAP_USER}@$system sudo cat /var/lib/dcos/dcos-oauth/auth-token-secret)
 	fi
 	token=$(java -jar /dcos/dcosTokenGenerator.jar $dcos_secret ${DCOS_USER})
     dcos config set core.dcos_acs_token $token

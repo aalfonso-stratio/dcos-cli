@@ -7,7 +7,7 @@ docker run -dit --name dcos-cli -e DCOS_IP=10.10.10.10 -e SSH=true -e TOKEN_AUTH
 docker run -dit --name dcos-cli -e DCOS_IP=10.10.10.10 -e SSL=true -e SSH=true -e TOKEN_AUTHENTICATION=true -e DCOS_USER=admin@demo.stratio.com -e DCOS_PASSWORD=stratio -e CLI_BOOTSTRAP_USER=root -e CLI_BOOTSTRAP_PASSWORD=12345678 stratio/dcos-cli:0.4.15
 
 * Authentication with user and pem file:
-docker run -dit --name dcos-cli -v /path_to_your_pem:/docker_path_to_pem -e DCOS_IP=10.10.10.10 -e SSL=true -e SSH=true -e TOKEN_AUTHENTICATION=true -e DCOS_USER=admin@demo.stratio.com -e DCOS_PASSWORD=stratio -e CLI_BOOTSTRAP_USER=root -e CLI_BOOTSTRAP_PASSWORD=12345678 -e PEM_FILE_PATH=/docker_path_to_pem/file.pem stratio/dcos-cli:0.4.15
+docker run -dit --name dcos-cli -v /path_to_your_pem:/docker_path_to_pem -e DCOS_IP=10.10.10.10 -e SSL=true -e SSH=true -e TOKEN_AUTHENTICATION=true -e DCOS_USER=admin@demo.stratio.com -e DCOS_PASSWORD=stratio -e CLI_BOOTSTRAP_USER=root -e CLI_BOOTSTRAP_PASSWORD=12345678 -e PEM_PATH=/docker_path_to_pem/file.pem stratio/dcos-cli:0.4.15
 
 - DCOS_IP: url of the dcos cluster master (i.e. 10.200.0.29).
 - SSL: whether you want to use HTTP or HTTPS protocol (possible values: true|false). 
@@ -24,4 +24,4 @@ docker run -dit --name dcos-cli -v /path_to_your_pem:/docker_path_to_pem -e DCOS
 - CORE_REPORTING: indicates whether to report usage events to Mesosphere. By default this is set to True
 - SSL_VERIFY: indicates whether to verify SSL certs for HTTPS or path to certs. By default this is set to False
 - TIMEOUT: request timeout in seconds, with a minimum value of 1 second. By default this is set to 5 seconds
-- PEM_FILE_PATH: Path to pem file to be used to log into DC/OS master
+- PEM_PATH: Path to pem file to be used to log into DC/OS master
